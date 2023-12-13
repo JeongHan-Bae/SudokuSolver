@@ -1,6 +1,10 @@
 # Sudoku Solver
 
-This is a Sudoku solver program written in C++. It allows you to input Sudoku puzzles through the console and solves them using a backtracking algorithm. The program can handle puzzles with empty cells, denoted by '.' or '0', and will output the solved Sudoku grid or notify if the puzzle is invalid.
+This is a Sudoku solver program written in C++. It allows you to input Sudoku puzzles through the console and solves them using a backtracking algorithm. The program can handle puzzles with empty cells, denoted by '.' or '0', and will output the solved Sudoku grid or notify if the puzzle is invalid (**which means that there is no solution for the sudoku puzzle**). 
+
+**If there are several solutions for the sudoku, the program will automatically generate one.**
+
+All invalid input chars (not digit nor '.' , neither space) will be considered as empty cells.
 
 ## Files
 
