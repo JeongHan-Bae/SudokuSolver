@@ -1,39 +1,53 @@
-# Sudoku Solver
+# Sudoku Solver v1.0.1
 
-This is a Sudoku solver program written in C++. It allows you to input Sudoku puzzles through the console and solves them using a backtracking algorithm. The program can handle puzzles with empty cells, denoted by '.' or '0', and will output the solved Sudoku grid or notify if the puzzle is invalid (**which means that there is no solution for the sudoku puzzle**). 
+Sudoku Solver v1.0.1 is an enhanced version of the Sudoku solver program written in C++. This update introduces a new library structure, performance improvements, and additional features.
 
-**If there are several solutions for the sudoku, the program will automatically generate one.**
+## Changes in Version 1.0.1
 
-All invalid input chars (not digit nor '.' , neither space) will be considered as empty cells.
+### Library Update
+
+The library has been updated to version 1.0.1 and now includes the following files:
+
+- `SudokuSolver.cpp`: Source file containing the implementation of the SudokuSolver class.
+- `SudokuSolver.h`: Header file declaring the SudokuSolver class.
+- `cmake-build-debug/`: Folder containing build artifacts, including the dynamic link library (`libSudokuServerLib.dll`) and its corresponding import library (`libSudokuServerLib.dll.a`).
+
+Users can choose to use the library as either a static or shared library based on their preferences.
+
+### Improved Performance
+
+In an effort to enhance both time and space efficiency, all unnecessary `int` data types have been changed to `unsigned char`.
 
 ## Files
 
 - `CMakeLists.txt`: CMake configuration file.
-- `main.cpp`: Source code containing the SudokuSolver class and the main program.
+- `main.cpp`: Source code for the Sudoku Solver program.
+- `SudokuSolver.cpp`: Source code containing the SudokuSolver class implementation.
+- `SudokuSolver.h`: Header file declaring the SudokuSolver class.
 - `cmake-build-debug/`: Folder containing build artifacts.
 
 ## Building
 
-To build the Sudoku solver, make sure you have CMake installed. Navigate to the project root directory and run the following commands:
+To build the Sudoku solver, ensure you have CMake installed. Navigate to the Test project root directory and run the following commands:
 
-```cmd
+```bash
 mkdir build
 cd build
 cmake ..
 make
 ```
 
-This will generate the executable `SudokuSolver.exe` in the `cmake-build-debug` folder.
+This will generate the executable `Test.exe` in the `Test/cmake-build-debug` folder.
 
 ## Usage
 
 Run the program by executing the `SudokuSolver.exe` file. Enter Sudoku puzzles line by line, with empty cells represented by '.' or '0'. The program will solve the puzzle and display the result. You can enter 'quit' at any time to exit the program.
 
-The program automatically ignore spaces.
+The program automatically ignores spaces.
 
-### Example Sudoku puzzle:
+### Example Sudoku Puzzle:
 
-```txt
+```cmd
 5 3 . . 7 . . . .
 6 . . 1 9 5 . . .
 . 9 8 . . . . 6 .
@@ -108,6 +122,7 @@ Invalid Sudoku puzzle.
 Enter 'Quit' to quit (case-insensitive),
 Or line 0 to solve another Sudoku:
 ```
+
 ## License
 
 This Sudoku solver is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute the code as per the terms of the license. Users are encouraged to modify the program to suit their needs.
