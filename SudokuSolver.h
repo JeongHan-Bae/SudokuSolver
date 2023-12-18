@@ -16,7 +16,15 @@ public:
 private:
     static bool noDuplicate(const std::vector<std::vector<char>>& board);
 
-    static bool checkNoDuplicate(const std::vector<std::vector<char>>& board, unsigned char cur_row, unsigned char cur_col, char value);
+    static bool noDupliRow(const std::vector<std::vector<char>>& board, unsigned char cur_row, unsigned char cur_col, char value);
+
+    static bool noDupliRow(const std::vector<std::vector<char>>& board, unsigned char cur_row, unsigned char cur_col, char value, unsigned char begin, unsigned char end);
+
+    static bool noDupliCol(const std::vector<std::vector<char>>& board, unsigned char cur_row, unsigned char cur_col, char value);
+
+    static bool noDupliCol(const std::vector<std::vector<char>>& board, unsigned char cur_row, unsigned char cur_col, char value, unsigned char begin, unsigned char end);
+
+    static bool noDupliMat(const std::vector<std::vector<char>>& board, unsigned char cur_row, unsigned char cur_col, char value);
 
     static bool canPlace(const std::vector<std::vector<char>>& board);
 
