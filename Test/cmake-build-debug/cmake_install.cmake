@@ -1,8 +1,8 @@
-# Install script for directory: D:/WorkSpace/SudokuServerLib
+# Install script for directory: D:/WorkSpace/SudokuServerLib/Test
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/SudokuServerLib")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/Test")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "D:/WorkSpace/SudokuServerLib/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "D:/WorkSpace/SudokuServerLib/Test/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

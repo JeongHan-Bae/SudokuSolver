@@ -6,7 +6,7 @@
 # It is included in the main 'build.ninja'.
 
 # =============================================================================
-# Project: SudokuServerLib
+# Project: Test
 # Configurations: Debug
 # =============================================================================
 # =============================================================================
@@ -14,7 +14,7 @@
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__SudokuServerLib_Debug
+rule CXX_COMPILER__Test_Debug
   depfile = $DEP_FILE
   deps = gcc
   command = D:\Clion\bin\mingw\bin\g++.exe $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -22,11 +22,11 @@ rule CXX_COMPILER__SudokuServerLib_Debug
 
 
 #############################################
-# Rule for linking CXX shared library.
+# Rule for linking CXX executable.
 
-rule CXX_SHARED_LIBRARY_LINKER__SudokuServerLib_Debug
-  command = cmd.exe /C "$PRE_LINK && D:\Clion\bin\mingw\bin\g++.exe $LANGUAGE_COMPILE_FLAGS $ARCH_FLAGS $LINK_FLAGS -shared -o $TARGET_FILE -Wl,--out-implib,$TARGET_IMPLIB -Wl,--major-image-version,0,--minor-image-version,0 $in $LINK_PATH $LINK_LIBRARIES && $POST_BUILD"
-  description = Linking CXX shared library $TARGET_FILE
+rule CXX_EXECUTABLE_LINKER__Test_Debug
+  command = cmd.exe /C "$PRE_LINK && D:\Clion\bin\mingw\bin\g++.exe $FLAGS $LINK_FLAGS $in -o $TARGET_FILE -Wl,--out-implib,$TARGET_IMPLIB -Wl,--major-image-version,0,--minor-image-version,0 $LINK_PATH $LINK_LIBRARIES && $POST_BUILD"
+  description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
 
@@ -42,7 +42,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = D:\Clion\bin\cmake\win\bin\cmake.exe --regenerate-during-build -SD:\WorkSpace\SudokuServerLib -BD:\WorkSpace\SudokuServerLib\cmake-build-debug
+  command = D:\Clion\bin\cmake\win\bin\cmake.exe --regenerate-during-build -SD:\WorkSpace\SudokuServerLib\Test -BD:\WorkSpace\SudokuServerLib\Test\cmake-build-debug
   description = Re-running CMake...
   generator = 1
 

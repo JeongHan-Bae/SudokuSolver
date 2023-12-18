@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.24)
-project(SudokuSolver)
+project(SudokuServerLib)
 
-set(CMAKE_CXX_STANDARD 17)
+# Add your source files
+set(SOURCE_FILES SudokuSolver.cpp)
 
-add_executable(SudokuSolver main.cpp)
+# Create a dynamic library from the source files
+add_library(SudokuServerLib SHARED ${SOURCE_FILES})
