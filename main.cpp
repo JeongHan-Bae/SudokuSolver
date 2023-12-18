@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <iostream>
 #include <algorithm>
+#include <array>
 
 class SudokuSolver {
 public:
@@ -40,63 +41,81 @@ public:
 private:
     static bool noDuplicate(const std::vector<std::vector<char>>& board) {
         // Check for each existing number if it has duplicate
-        for(int i = 0; i < 9; ++i){
-            for(int j=0; j<9; j++){
+        for(unsigned char i = 0; i < 9; ++i){
+            for(unsigned char j = 0; j < 9; ++j){
                 if(board[i][j] >= '1' && board[i][j] <= '9' ){
-                    if(!checkNoDuplicate(board, i, j, board[i][j])){
-                        return false;
-                    }
+                    if(!noDupliRow(board, i, j, board[i][j], i, 9)) return false;
+                    if(!noDupliCol(board, i, j, board[i][j], j, 9)) return false;
+                    if(!noDupliMat(board, i, j, board[i][j])) return false;
                 }
             }
         }
         return true;
     }
 
-    static bool checkNoDuplicate(const std::vector<std::vector<char>>& board, int cur_row, int cur_col, char value){
-        
+    static bool noDupliRow(const std::vector<std::vector<char>>& board, unsigned char cur_row, unsigned char cur_col, char value){
+        // Check Row begin with 0, end with 9
+        return noDupliRow(board, cur_row, cur_col, value, 0, 9);
+    }
+
+    static bool noDupliRow(const std::vector<std::vector<char>>& board, unsigned char cur_row, unsigned char cur_col, char value, unsigned char begin, unsigned char end){
         // Check row
-        for(int i = 0; i < 9; ++i){
+        for(unsigned char i = begin; i < end; ++i){
             if(board[i][cur_col] == value && i != cur_row){
                 return false;
             }
         }
+        return true;
+    }
+
+    static bool noDupliCol(const std::vector<std::vector<char>>& board, unsigned char cur_row, unsigned char cur_col, char value){
+        // Check Column begin with 0, end with 9
+        return noDupliCol(board, cur_row, cur_col, value, 0, 9);
+    }
+
+    static bool noDupliCol(const std::vector<std::vector<char>>& board, unsigned char cur_row, unsigned char cur_col, char value, unsigned char begin, unsigned char end){
         // Check Column
-        for(int j = 0; j < 9; ++j){
+        for(unsigned char j = begin; j < end; ++j){
             if(board[cur_row][j] == value && j != cur_col){
                 return false;
             }
         }
+        return true;
+    }
+
+    static bool noDupliMat(const std::vector<std::vector<char>>& board, unsigned char cur_row, unsigned char cur_col, char value){
         // Check 3x3 Matrix
-        for(int k = 0; k < 9; ++k){
-            int x = 3 * int(cur_row / 3) + int(k / 3);
-            int y = 3 * int(cur_col / 3) + (k % 3);
+        for(unsigned char k = 0; k < 9; ++k){
+            unsigned char x = 3 * (unsigned char)(cur_row / 3) + (unsigned char)(k / 3);
+            unsigned char y = 3 * (unsigned char)(cur_col / 3) + (k % 3);
             if(board[x][y] == value && x != cur_row && y != cur_col){
                 return false;
             }
         }
-
         return true;
     }
 
     static bool canPlace(const std::vector<std::vector<char>>& board) {
 
         // Check Column
-        for (int col = 0; col < 9; ++col) {
+        for (unsigned char col = 0; col < 9; ++col) {
             std::vector<bool> exist(9, false);
             std::vector<bool> places(9, false);
-            for (int i = 0; i < 9; ++i) {
+            for (unsigned char i = 0; i < 9; ++i) {
                 if (board[i][col] >= '1' && board[i][col] <= '9') {
                     exist[board[i][col] - '1'] = true;
                 } else {
                     places[i] = true;
                 }
             }
-            for (int num = 0; num < 9; ++num) {
+            for (unsigned char num = 0; num < 9; ++num) {
                 if (!exist[num]) {
                     bool valid = false;
-                    for(int i = 0; i < 9; ++i){
+                    for(unsigned char i = 0; i < 9; ++i){
                         if(places[i]){
-                            if(isValid(board, std::make_pair(i,col),num)){
+                            // Avoid checking the same Col or the checked vals
+                            if(noDupliRow(board, i, col, num + '1', i, 9)
+                            && noDupliMat(board, i, col, num + '1')){
                                 valid = true;
                                 break;
                             }
@@ -106,23 +125,25 @@ private:
                 }
             }
         }
-        // Check row
-        for (int row  = 0; row < 9; ++row) {
+        // Check Row
+        for (unsigned char row  = 0; row < 9; ++row) {
             std::vector<bool> exist(9, false);
             std::vector<bool> places(9, false);
-            for (int j = 0; j < 9; ++j) {
+            for (unsigned char j = 0; j < 9; ++j) {
                 if (board[row][j] >= '1' && board[row][j] <= '9') {
                     exist[board[row][j] - '1'] = true;
                 } else {
                     places[j] = true;
                 }
             }
-            for (int num = 0; num < 9; ++num) {
+            for (unsigned char num = 0; num < 9; ++num) {
                 if (!exist[num]) {
                     bool valid = false;
-                    for(int j = 0; j < 9; ++j){
+                    for(unsigned char j = 0; j < 9; ++j){
                         if(places[j]) {
-                            if (isValid(board, std::make_pair(row, j), num)) {
+                            // Avoid checking the same Row or the checked vals
+                            if (noDupliCol(board, row, j, num + '1', j, 9)
+                                && noDupliMat(board, row, j, num + '1')){
                                 valid = true;
                                 break;
                             }
@@ -133,22 +154,28 @@ private:
             }
         }
         // Check 3x3 Matrix
-        for (int square = 0; square < 9; ++square) {
+        for (unsigned char square = 0; square < 9; ++square) {
             std::vector<bool> exist(9, false);
             std::vector<bool> places(9, false);
-            for (int k = 0; k < 9; ++k) {
-                if (board[3 * int(square/3) + int(k/3)][3 * (square % 3) + k % 3] >= '1' && board[3 * int(square/3) + int(k/3)][3 * (square % 3) + k % 3] <= '9') {
-                    exist[board[3 * int(square/3) + int(k/3)][3 * (square % 3) + k % 3] - '1'] = true;
+            for (unsigned char k = 0; k < 9; ++k) {
+                unsigned char x = 3 * (unsigned char)(square/3) + (unsigned char)(k/3);
+                unsigned char y = 3 * (square % 3) + k % 3;
+                if (board[x][y] >= '1' && board[x][y] <= '9') {
+                    exist[board[x][y] - '1'] = true;
                 } else {
                     places[k] = true;
                 }
             }
-            for (int num = 0; num < 9; ++num) {
+            for (unsigned char num = 0; num < 9; ++num) {
                 if (!exist[num]) {
                     bool valid = false;
-                    for(int k = 0; k < 9; ++k){
+                    for(unsigned char k = 0; k < 9; ++k){
                         if(places[k]) {
-                            if (isValid(board, std::make_pair(3 * int(square/3) + int(k/3), 3 * (square % 3) + k % 3), num)) {
+                            unsigned char x = 3 * (unsigned char)(square/3) + (unsigned char)(k/3);
+                            unsigned char y = 3 * (square % 3) + k % 3;
+                            // Avoid checking the same Mat
+                            if (noDupliRow(board, x, y, num + '1')
+                                && noDupliCol(board, x, y, num + '1')){
                                 valid = true;
                                 break;
                             }
@@ -163,30 +190,9 @@ private:
 
     static bool isValid(const std::vector<std::vector<char>>& board, std::pair<unsigned char, unsigned char> pos, unsigned char num) {
         // Implement the validity check for rows, columns, and small squares
-        // Check Row
-        for (unsigned char i = 0; i < 9; ++i) {
-            if (board[pos.first][i] == '1' + num) {
-                return false;
-            }
-        }
-        // Check Column
-        for (unsigned char i = 0; i < 9; ++i) {
-            if (board[i][pos.second] == '1' + num) {
-                return false;
-            }
-        }
-        // Check 3x3 Matrix
-        unsigned char startRow = 3 * (pos.first / 3);
-        unsigned char startCol = 3 * (pos.second / 3);
-        for (unsigned char i = 0; i < 3; ++i) {
-            for (unsigned char j = 0; j < 3; ++j) {
-                if (board[startRow + i][startCol + j] == '1' + num) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
+        return noDupliRow(board, pos.first, pos.second, num + '1')
+        && noDupliCol(board, pos.first, pos.second, num + '1')
+        && noDupliMat(board, pos.first, pos.second, num + '1');
     }
 
     static bool solve(std::vector<std::vector<char>>& board, std::unordered_map<unsigned char, std::array<bool, 9>>& solver) {
