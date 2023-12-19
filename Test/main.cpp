@@ -8,10 +8,10 @@ void setColor(int textColor, int bgColor = 7) {
 
 // Function to reset text color to default
 void resetColor() {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7); // 15 is the default color code
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7); // 7 is the default color code
 }
 void setBald() {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15); // 15 is the default color code
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15); // 15 is the bald code
 }
 
 int main() {
@@ -87,6 +87,7 @@ int main() {
         resetColor();
         for (unsigned char i = 0; i < 9; ++i) {
             for (unsigned char j = 0; j < 9; ++j) {
+                // Output the number along with the type (color)
                 setColor(colors[typeGrid[i][j]]);
                 printf(" %c", board[i][j]);
             }
