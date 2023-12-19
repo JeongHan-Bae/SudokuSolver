@@ -209,11 +209,8 @@ For clarity, here's how the types are mapped to colors:
 
 **These are results in the example.**
 
-![ClassicSolu](https://github.com/JeongHan-Bae/SudokuSolver/assets/128088756/fb26aa4a-4751-4bab-8ee3-fcf73ce9e916)
-![NonominoSolu](https://github.com/JeongHan-Bae/SudokuSolver/assets/128088756/32f19e4a-036c-4a1a-96d5-e7e285f20185)
-
-
-
+![ClassicSolu](https://github.com/JeongHan-Bae/SudokuSolver/assets/128088756/6e2d646e-83f4-46b4-9cb6-48154aeeb6e9)
+![NonominoSolu](https://github.com/JeongHan-Bae/SudokuSolver/assets/128088756/d6d4398b-211a-4e50-ba82-9d848fdf83ca)
 
 
 ### User Input and Validation Example
