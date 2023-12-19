@@ -1,71 +1,101 @@
 #include <iostream>
+#include <windows.h>
 #include "SudokuSolver.h"
 
+void setColor(int textColor, int bgColor = 7) {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), textColor | (bgColor << 5));
+}
+
+// Function to reset text color to default
+void resetColor() {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7); // 15 is the default color code
+}
+void setBald() {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15); // 15 is the default color code
+}
+
 int main() {
+    setBald();
+    printf("Welcome to Sudoku Solver!\n\n");
 
-    printf("Welcome to Sudoku Solver!\n");
+    // Classic Sudoku Example
+    std::vector<std::vector<char>> classicBoard = {
+            {'5', '3', '.', '.', '7', '.', '.', '.', '.'},
+            {'6', '.', '.', '1', '9', '5', '.', '.', '.'},
+            {'.', '9', '8', '.', '.', '.', '.', '6', '.'},
+            {'8', '.', '.', '.', '6', '.', '.', '.', '3'},
+            {'4', '.', '.', '8', '.', '3', '.', '.', '1'},
+            {'7', '.', '.', '.', '2', '.', '.', '.', '6'},
+            {'.', '6', '.', '.', '.', '.', '2', '8', '.'},
+            {'.', '.', '.', '4', '1', '9', '.', '.', '5'},
+            {'.', '.', '.', '.', '8', '.', '.', '7', '9'}
+    };
 
-    printf("Please enter the line %d: \n", 0);
+    SudokuSolver::safeSolve(classicBoard);
 
-
-    while (true) {
-        std::vector<std::vector<char>> sudokuGrid =  {
-                {'.','.','.','.','.','.','.','.','.'},
-                {'.','.','.','.','.','.','.','.','.'},
-                {'.','.','.','.','.','.','.','.','.'},
-                {'.','.','.','.','.','.','.','.','.'},
-                {'.','.','.','.','.','.','.','.','.'},
-                {'.','.','.','.','.','.','.','.','.'},
-                {'.','.','.','.','.','.','.','.','.'},
-                {'.','.','.','.','.','.','.','.','.'},
-                {'.','.','.','.','.','.','.','.','.'}
-        };
-
-        for (int i = 0; i < 9; ++i) {
-            if(i)printf("Please enter the line %d: \n", i);
-            std::string line;
-            std::getline(std::cin, line);
-            if(!i){
-                std::string userChoice = line;
-                std::transform(userChoice.begin(), userChoice.end(), userChoice.begin(), ::tolower);
-
-                if (userChoice == "quit") {
-                    return 0;  // Terminate the program
-                }
+    // Print the result or indicate if it's invalid
+    if (classicBoard.empty()) {
+        printf("Invalid Classic Sudoku\n");
+    } else {
+        printf("Classic Sudoku Solution:\n  ");
+        resetColor();
+        for (const auto& row : classicBoard) {
+            setColor(0);
+            printf(" ");
+            for (char cell : row) {
+                printf("%c ", cell);
             }
-            for (int j = 0, k = 0; j < 9 && k < line.size(); ++j) {
-                // Skip over spaces
-                while (k < line.size() && line[k] == ' ') {
-                    ++k;
-                }
-
-                // Fill in the sudokuGrid
-                if (k < line.size()) {
-                    sudokuGrid[i][j] = line[k];
-                    ++k;
-                }
-            }
+            resetColor();
+            printf("\n  ");
         }
-
-        // Use the SudokuSolver class to solve the Sudoku puzzle
-        SudokuSolver::safeSolve(sudokuGrid);
-
-        // Check if the Sudoku puzzle is invalid
-        if (sudokuGrid.empty()) {
-            printf("Invalid Sudoku puzzle.\n");
-        } else {
-            // Print the solved Sudoku grid or a message indicating failure
-            printf("Solved Sudoku:\n");
-            for (const auto& row : sudokuGrid) {
-                for (char ch : row) {
-                    printf("%c ", ch);
-                }
-                printf("%c", '\n');
-            }
-        }
-
-        // Ask the user to continue or quit
-        printf("Enter 'Quit' to quit (case-insensitive), \nOr line 0 to solve another Sudoku: \n");
+        printf("\n");
     }
 
+    // Example typeGrid
+    std::vector<std::vector<unsigned char>> typeGrid = {
+            {0, 0, 0, 1, 2, 2, 2, 2, 2},
+            {0, 0, 0, 1, 1, 1, 2, 2, 2},
+            {0, 3, 3, 3, 3, 1, 1, 1, 2},
+            {0, 0, 3, 4, 4, 4, 4, 1, 1},
+            {3, 3, 3, 3, 4, 5, 5, 5, 5},
+            {6, 6, 4, 4, 4, 4, 5, 7, 7},
+            {8, 6, 6, 6, 5, 5, 5, 5, 7},
+            {8, 8, 8, 6, 6, 6, 7, 7, 7},
+            {8, 8, 8, 8, 8, 6, 7, 7, 7}
+    };
+
+    std::vector<std::vector<char>> board = {
+            {'3', '.', '.', '.', '.', '.', '.', '.', '4'},
+            {'.', '.', '2', '.', '6', '.', '1', '.', '.'},
+            {'.', '1', '.', '9', '.', '8', '.', '2', '.'},
+            {'.', '.', '5', '.', '.', '.', '6', '.', '.'},
+            {'.', '2', '.', '.', '.', '.', '.', '1', '.'},
+            {'.', '.', '9', '.', '.', '.', '8', '.', '.'},
+            {'.', '8', '.', '3', '.', '4', '.', '6', '.'},
+            {'.', '.', '4', '.', '.', '.', '9', '.', '.'},
+            {'5', '.', '.', '.', '.', '.', '.', '.', '7'}
+    };
+
+    SudokuSolver::solveNonomino(board, typeGrid);
+    std::vector<int> colors = {4, 6, 0, 10, 3, 1, 13, 12, 8};
+    setBald();
+    // Print the result or indicate if it's invalid
+    if (board.empty()) {
+        printf("Invalid Nonomino Sudoku\n");
+    } else {
+        printf("Nonomino Sudoku Solution:\n  ");
+        resetColor();
+        for (unsigned char i = 0; i < 9; ++i) {
+            for (unsigned char j = 0; j < 9; ++j) {
+                setColor(colors[typeGrid[i][j]]);
+                printf(" %c", board[i][j]);
+            }
+            printf(" ");
+            resetColor();
+            printf("\n  ");
+        }
+        printf("\n");
+    }
+
+    return 0;
 }
