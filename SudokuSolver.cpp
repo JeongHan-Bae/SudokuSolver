@@ -1,7 +1,20 @@
 #include "SudokuSolver.h"
 
-bool SudokuSolver::isValidSudoku(std::vector<std::vector<char>>& board) {
+bool SudokuSolver::isValidSudoku(const std::vector<std::vector<char>>& board) {
     return noDuplicate(board) && canPlace(board);
+}
+
+bool SudokuSolver::isValidNonomino(const std::vector<std::vector<char>>& board,
+                                   const std::vector<std::vector<unsigned char>>& typeGrid,
+                                   const std::vector<std::vector<std::pair<unsigned char, unsigned char>>>& typeSearch) {
+    // Ensure the input typeGrid is valid
+    for(const auto& typeVect : typeSearch){
+        if(typeVect.size() != 9){
+            return false;
+        }
+    }
+    // Check noDuplicate and canPlace
+    return noDuplicateNono(board, typeGrid, typeSearch) && canPlaceNono(board, typeGrid, typeSearch);
 }
 
 void SudokuSolver::solveSudoku(std::vector<std::vector<char>>& board) {
@@ -22,6 +35,43 @@ void SudokuSolver::solveSudoku(std::vector<std::vector<char>>& board) {
     if (!solve(board, solver)) board = {};
 }
 
+void SudokuSolver::solveNonomino(std::vector<std::vector<char>>& board,
+                                 const std::vector<std::vector<unsigned char>>& typeGrid) {
+
+    // Initialize the data structure to track possibilities for each empty cell
+    std::unordered_map<unsigned char, std::array<bool, 9>> solver;
+
+    // Populate possibilities map for empty cells
+    for (unsigned char i = 0; i < 9; ++i) {
+        for (unsigned char j = 0; j < 9; ++j) {
+            if (board[i][j] < '1' || board[i][j] > '9') {
+                solver[9 * i + j] = { true, true, true, true, true, true, true, true, true }; // Initialize with default values
+            }
+        }
+    }
+
+    // Create typeSearch to help find cells of each type
+    std::vector<std::vector<std::pair<unsigned char, unsigned char>>> typeSearch(9);
+
+    // Iterate through typeGrid and populate typeSearch
+    for (unsigned char i = 0; i < 9; ++i) {
+        for (unsigned char j = 0; j < 9; ++j) {
+            unsigned char value = typeGrid[i][j];
+            typeSearch[value].emplace_back(i, j);
+        }
+    }
+
+    // If Invalid, return {};
+    if (!isValidNonomino(board, typeGrid, typeSearch)){
+        board = {};
+        return;
+    }
+
+    // Call the recursive solve function to solve the Sudoku puzzle
+    // If Invalid, return {};
+    if (!solveNono(board, solver, typeGrid, typeSearch)) board = {};
+}
+
 void SudokuSolver::safeSolve(std::vector<std::vector<char>>& board){
     // Test is the Sudoku Grid is a valid Grid to solve
     if (!isValidSudoku(board)){
@@ -40,6 +90,22 @@ bool SudokuSolver::noDuplicate(const std::vector<std::vector<char>>& board) {
                 if(!noDupliRow(board, i, j, board[i][j], i, 9)) return false;
                 if(!noDupliCol(board, i, j, board[i][j], j, 9)) return false;
                 if(!noDupliMat(board, i, j, board[i][j])) return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool SudokuSolver::noDuplicateNono(const std::vector<std::vector<char>>& board,
+                                   const std::vector<std::vector<unsigned char>>& typeGrid,
+                                   const std::vector<std::vector<std::pair<unsigned char, unsigned char>>>& typeSearch) {
+    // Check for each existing number if it has duplicate
+    for(unsigned char i = 0; i < 9; ++i){
+        for(unsigned char j = 0; j < 9; ++j){
+            if(board[i][j] >= '1' && board[i][j] <= '9' ){
+                if(!noDupliRow(board, i, j, board[i][j], i, 9)) return false;
+                if(!noDupliCol(board, i, j, board[i][j], j, 9)) return false;
+                if(!noDupliType(board, i, j, typeGrid, typeSearch, board[i][j])) return false;
             }
         }
     }
@@ -88,6 +154,22 @@ bool SudokuSolver::noDupliMat(const std::vector<std::vector<char>>& board, unsig
     return true;
 }
 
+bool SudokuSolver::noDupliType(const std::vector<std::vector<char>>& board, unsigned char cur_row, unsigned char cur_col,
+                               const std::vector<std::vector<unsigned char>>& typeGrid,
+                               const std::vector<std::vector<std::pair<unsigned char, unsigned char>>>& typeSearch,
+                               char value){
+    // Check sub 9-omino of the same Type
+    unsigned char type = typeGrid[cur_row][cur_col];
+    for(unsigned char k = 0; k < 9; ++k){
+        unsigned char x = typeSearch[type][k].first;
+        unsigned char y = typeSearch[type][k].second;
+        if(board[x][y] == value && x != cur_row && y != cur_col){
+            return false;
+        }
+    }
+    return true;
+}
+
 bool SudokuSolver::canPlace(const std::vector<std::vector<char>>& board) {
 
     // Check Column
@@ -107,8 +189,8 @@ bool SudokuSolver::canPlace(const std::vector<std::vector<char>>& board) {
                 for(unsigned char i = 0; i < 9; ++i){
                     if(places[i]){
                         // Avoid checking the same Col or the checked vals
-                        if(noDupliRow(board, i, col, num + '1', i, 9)
-                           && noDupliMat(board, i, col, num + '1')){
+                        if(noDupliRow(board, i, col, static_cast<char>(num + '1'), i, 9)
+                           && noDupliMat(board, i, col, static_cast<char>(num + '1'))){
                             valid = true;
                             break;
                         }
@@ -135,8 +217,8 @@ bool SudokuSolver::canPlace(const std::vector<std::vector<char>>& board) {
                 for(unsigned char j = 0; j < 9; ++j){
                     if(places[j]) {
                         // Avoid checking the same Row or the checked vals
-                        if (noDupliCol(board, row, j, num + '1', j, 9)
-                            && noDupliMat(board, row, j, num + '1')){
+                        if (noDupliCol(board, row, j, static_cast<char>(num + '1'), j, 9)
+                            && noDupliMat(board, row, j, static_cast<char>(num + '1'))){
                             valid = true;
                             break;
                         }
@@ -167,8 +249,103 @@ bool SudokuSolver::canPlace(const std::vector<std::vector<char>>& board) {
                         unsigned char x = 3 * (unsigned char)(square/3) + (unsigned char)(k/3);
                         unsigned char y = 3 * (square % 3) + k % 3;
                         // Avoid checking the same Mat
-                        if (noDupliRow(board, x, y, num + '1')
-                            && noDupliCol(board, x, y, num + '1')){
+                        if (noDupliRow(board, x, y, static_cast<char>(num + '1'))
+                            && noDupliCol(board, x, y, static_cast<char>(num + '1'))){
+                            valid = true;
+                            break;
+                        }
+                    }
+                }
+                if (!valid) return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool SudokuSolver::canPlaceNono(const std::vector<std::vector<char>>& board,
+                                const std::vector<std::vector<unsigned char>>& typeGrid,
+                                const std::vector<std::vector<std::pair<unsigned char, unsigned char>>>& typeSearch) {
+
+    // Check Column
+    for (unsigned char col = 0; col < 9; ++col) {
+        std::vector<bool> exist(9, false);
+        std::vector<bool> places(9, false);
+        for (unsigned char i = 0; i < 9; ++i) {
+            if (board[i][col] >= '1' && board[i][col] <= '9') {
+                exist[board[i][col] - '1'] = true;
+            } else {
+                places[i] = true;
+            }
+        }
+        for (unsigned char num = 0; num < 9; ++num) {
+            if (!exist[num]) {
+                bool valid = false;
+                for(unsigned char i = 0; i < 9; ++i){
+                    if(places[i]){
+                        // Avoid checking the same Col or the checked vals
+                        if(noDupliRow(board, i, col, static_cast<char>(num + '1'), i, 9)
+                           && noDupliType(board, i, col, typeGrid, typeSearch, static_cast<char>(num + '1'))){
+                            valid = true;
+                            break;
+                        }
+                    }
+                }
+                if (!valid) return false;
+            }
+        }
+    }
+    // Check Row
+    for (unsigned char row  = 0; row < 9; ++row) {
+        std::vector<bool> exist(9, false);
+        std::vector<bool> places(9, false);
+        for (unsigned char j = 0; j < 9; ++j) {
+            if (board[row][j] >= '1' && board[row][j] <= '9') {
+                exist[board[row][j] - '1'] = true;
+            } else {
+                places[j] = true;
+            }
+        }
+        for (unsigned char num = 0; num < 9; ++num) {
+            if (!exist[num]) {
+                bool valid = false;
+                for(unsigned char j = 0; j < 9; ++j){
+                    if(places[j]) {
+                        // Avoid checking the same Row or the checked vals
+                        if (noDupliCol(board, row, j, static_cast<char>(num + '1'), j, 9)
+                            && noDupliType(board, row, j, typeGrid, typeSearch, static_cast<char>(num + '1'))){
+                            valid = true;
+                            break;
+                        }
+                    }
+                }
+                if (!valid) return false;
+            }
+        }
+    }
+    // Check 9-sized Type
+    for (unsigned char type = 0; type < 9; ++type) {
+        std::vector<bool> exist(9, false);
+        std::vector<bool> places(9, false);
+        for (unsigned char k = 0; k < 9; ++k) {
+            unsigned char x = typeSearch[type][k].first;
+            unsigned char y = typeSearch[type][k].second;
+            if (board[x][y] >= '1' && board[x][y] <= '9') {
+                exist[board[x][y] - '1'] = true;
+            } else {
+                places[k] = true;
+            }
+        }
+        for (unsigned char num = 0; num < 9; ++num) {
+            if (!exist[num]) {
+                bool valid = false;
+                for(unsigned char k = 0; k < 9; ++k){
+                    if(places[k]) {
+                        unsigned char x = typeSearch[type][k].first;
+                        unsigned char y = typeSearch[type][k].second;
+                        // Avoid checking the same Mat
+                        if (noDupliRow(board, x, y, static_cast<char>(num + '1'))
+                            && noDupliCol(board, x, y, static_cast<char>(num + '1'))){
                             valid = true;
                             break;
                         }
@@ -183,15 +360,26 @@ bool SudokuSolver::canPlace(const std::vector<std::vector<char>>& board) {
 
 bool SudokuSolver::isValid(const std::vector<std::vector<char>>& board, std::pair<unsigned char, unsigned char> pos, unsigned char num) {
     // Implement the validity check for rows, columns, and small squares
-    return noDupliRow(board, pos.first, pos.second, num + '1')
-           && noDupliCol(board, pos.first, pos.second, num + '1')
-           && noDupliMat(board, pos.first, pos.second, num + '1');
+    return noDupliRow(board, pos.first, pos.second, static_cast<char>(num + '1'))
+           && noDupliCol(board, pos.first, pos.second, static_cast<char>(num + '1'))
+           && noDupliMat(board, pos.first, pos.second, static_cast<char>(num + '1'));
+}
+
+bool SudokuSolver::isValidNono(const std::vector<std::vector<char>>& board, std::pair<unsigned char, unsigned char> pos,
+                               const std::vector<std::vector<unsigned char>>& typeGrid,
+                               const std::vector<std::vector<std::pair<unsigned char, unsigned char>>>& typeSearch,
+                               unsigned char num) {
+    // Implement the validity check for rows, columns, and types
+    return noDupliRow(board, pos.first, pos.second, static_cast<char>(num + '1'))
+           && noDupliCol(board, pos.first, pos.second, static_cast<char>(num + '1'))
+           && noDupliType(board, pos.first, pos.second, typeGrid, typeSearch, static_cast<char>(num + '1'));
 }
 
 bool SudokuSolver::solve(std::vector<std::vector<char>>& board, std::unordered_map<unsigned char, std::array<bool, 9>>& solver) {
     bool continue_solve = true;
     unsigned char target = (*solver.begin()).first;
     unsigned char chances = 9;
+
     while (continue_solve) {
         continue_solve = false;
 
@@ -218,7 +406,7 @@ bool SudokuSolver::solve(std::vector<std::vector<char>>& board, std::unordered_m
             }
             else if (sum == 1) {
                 // Set the only valid value in the cell
-                board[i][j] = last_valid_num + '1';
+                board[i][j] = static_cast<char>(last_valid_num + '1');
                 solver.erase(item.first);
                 continue_solve = true;
             }
@@ -242,9 +430,79 @@ bool SudokuSolver::solve(std::vector<std::vector<char>>& board, std::unordered_m
             std::vector<std::vector<char>> new_board = board;
             std::unordered_map<unsigned char, std::array<bool, 9>> new_solver = solver;
             new_solver.erase(i * 9 + j);
-            new_board[i][j] = k + '1';
+            new_board[i][j] = static_cast<char>(k + '1');
 
             if (solve(new_board, new_solver)) {
+                board = new_board;
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool SudokuSolver::solveNono(std::vector<std::vector<char>>& board, std::unordered_map<unsigned char, std::array<bool, 9>>& solver,
+                             const std::vector<std::vector<unsigned char>>& typeGrid,
+                             const std::vector<std::vector<std::pair<unsigned char, unsigned char>>>& typeSearch) {
+
+    bool continue_solve = true;
+    unsigned char target = (*solver.begin()).first;
+    unsigned char chances = 9;
+
+    while (continue_solve) {
+        continue_solve = false;
+
+        for (auto& item : solver) {
+            unsigned char i = item.first / 9;
+            unsigned char j = item.first % 9;
+
+            std::array<bool, 9>& possibilities = item.second;
+            unsigned char sum = 0;
+            unsigned char last_valid_num = 0;
+
+            for (unsigned char k = 0; k < 9; ++k) {
+                if (possibilities[k]) {
+                    possibilities[k] = isValidNono(board, { i, j }, typeGrid, typeSearch, k);
+                    sum += possibilities[k];
+                    if (possibilities[k]) {
+                        last_valid_num = k;
+                    }
+                }
+            }
+
+            if (sum == 0) {
+                return false; // No valid possibilities for this cell
+            }
+            else if (sum == 1) {
+                // Set the only valid value in the cell
+                board[i][j] = static_cast<char>(last_valid_num + '1');
+                solver.erase(item.first);
+                continue_solve = true;
+            }
+            //get the cell with fewer possibilities
+            if (sum < chances) {
+                target = item.first;
+            }
+        }
+    }
+
+    if (solver.empty()) {
+        return true; // Board is solved
+    }
+
+    unsigned char i = target / 9;
+    unsigned char j = target % 9;
+
+    for (unsigned char k = 0; k < 9; ++k) {
+        if (solver[target][k]) {
+            // Try setting the cell to the valid value and recursively solve
+            std::vector<std::vector<char>> new_board = board;
+            std::unordered_map<unsigned char, std::array<bool, 9>> new_solver = solver;
+            new_solver.erase(i * 9 + j);
+            new_board[i][j] = static_cast<char>(k + '1');
+
+            if (solveNono(new_board, new_solver, typeGrid, typeSearch)) {
                 board = new_board;
                 return true;
             }
