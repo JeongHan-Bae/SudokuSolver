@@ -1,4 +1,0 @@
-D:\Clion\bin\cmake\win\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=D:/Clion/bin/ninja/win/ninja.exe -G Ninja -S D:\WorkSpace\SudokuServerLib -B D:\WorkSpace\SudokuServerLib\cmake-build-debug
--- Configuring done
--- Generating done
--- Build files have been written to: D:/WorkSpace/SudokuServerLib/cmake-build-debug
