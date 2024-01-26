@@ -24,7 +24,7 @@ Library 가 Version 1.0.1로 更新(경신)되었으며 이제 다음 文件(문
 
 - `SudokuSolver.cpp`: Source file containing the implementation of the SudokuSolver class.
 - `SudokuSolver.h`: Header file declaring the SudokuSolver class.
-- `cmake-build-debug/`: Folder containing build artifacts, including the dynamic link library (`libSudokuServerLib.dll`) and its corresponding import library (`libSudokuServerLib.dll.a`).
+- `lib/`: Folder containing build artifacts, including the dynamic link library (`libSudokuServerLib.dll`) and its corresponding import library (`libSudokuServerLib.dll.a`).
 
 使用者(사용자)들은 選好(선호)에 따라 library 를 靜(정, en: static)적 또는 公有(공유, en: shared) library 로 使用(사용)할 수 있습니다.
 
@@ -38,7 +38,7 @@ Library 가 Version 1.0.1로 更新(경신)되었으며 이제 다음 文件(문
 - `main.cpp`: Source code for the Sudoku Solver program.
 - `SudokuSolver.cpp`: Source code containing the SudokuSolver class implementation.
 - `SudokuSolver.h`: Header file declaring the SudokuSolver class.
-- `cmake-build-debug/`: Folder containing build artifacts.
+- `lib/`: Folder containing build artifacts.
 
 ## <span style="font-size: larger;">使用</span>(<span style="font-size: smaller;">사용, Usage</span>)
 
