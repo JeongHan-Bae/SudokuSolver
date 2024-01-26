@@ -1,8 +1,12 @@
-# Sudoku Solver v1.2.0
+# Sudoku Solver v1.2.1
 
-Sudoku Solver v1.2.0 is an upgraded version of the Sudoku solver program written in C++. This release includes improvements for code quality and functionality.
+Sudoku Solver v1.2.1 is an upgraded version of the Sudoku solver program written in C++. This release includes improvements for code quality and functionality.
 
 中國朝鮮語(중국조선어) 版本(판본)을 보려면 [여기](README.ko-cn.md)를 방문하세요.
+
+## Changes in Version 1.2.0
+
+- Modified structures.
 
 ## Changes in Version 1.2.0
 
