@@ -20,7 +20,7 @@ The library has been updated to version 1.0.1 and now includes the following fil
 
 - `SudokuSolver.cpp`: Source file containing the implementation of the SudokuSolver class.
 - `SudokuSolver.h`: Header file declaring the SudokuSolver class.
-- `cmake-build-debug/`: Folder containing build artifacts, including the dynamic link library (`libSudokuServerLib.dll`) and its corresponding import library (`libSudokuServerLib.dll.a`).
+- `lib/`: Folder containing build artifacts, including the dynamic link library (`libSudokuServerLib.dll`) and its corresponding import library (`libSudokuServerLib.dll.a`).
 
 Users can choose to use the library as either a static or shared library based on their preferences.
 
@@ -34,7 +34,7 @@ In an effort to enhance both time and space efficiency, all unnecessary `int` da
 - `main.cpp`: Source code for the Sudoku Solver program.
 - `SudokuSolver.cpp`: Source code containing the SudokuSolver class implementation.
 - `SudokuSolver.h`: Header file declaring the SudokuSolver class.
-- `cmake-build-debug/`: Folder containing build artifacts.
+- `lib/`: Folder containing build artifacts.
 
 ## Usage
 
